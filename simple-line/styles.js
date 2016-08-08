@@ -90,13 +90,12 @@ linecolours:["#b34b41","#5a8caf","#9baa6e","#eda45e","#9c5f87","#486ba0"]
 }
 var stylenyminutevid = {classes:
 [{class:"chart text {-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;}"},
-{class:"background{fill: #333; opacity: 0.9}"},
+{class:"background{fill: #333; opacity: 1.0}"},
 {class:"titleframe{fill: #757575;}"},
 {class:"chartholder{fill: none;}"},
-{class:"title{font-size: 60px; fill: #FFF2E1; font-weight: 600;}"},
+{class:"title{font-size: 80px; fill: #DEDEDE; font-weight: 600;}"},
 {class:"subtitle{font-size: 42; fill: #FFF2E1; font-weight: 600;}"},
-{class:"source{font-size: 30; fill: #FFF2E1; font-weight: 600;}"},
-{class:"valLabels{font-size: 36; fill: #FFF2E1; font-weight: 600;}"},
+{class:"source{font-size: 36; fill: #ABABAB; font-weight: 300;text-anchor:end;}"},
 {class:"xAxis{fill:none; stroke: none;}"},
 {class:"xAxis line{fill:none; stroke-width: 2.0px; stroke:#C3BCB0;}"},
 {class:"xAxis text{font-size: 42; fill: #FFF2E1; font-weight: 600;}"},
@@ -104,15 +103,17 @@ var stylenyminutevid = {classes:
 {class:"yAxis line{fill:none; stroke-width: 2.0px; stroke:#C3BCB0;}"},
 {class:"yAxis text{font-size: 42; fill: #FFF2E1; font-weight: 600;font-feature-settings: 'tnum' 1; text-anchor: end;}"},
 {class:"origin line{fill:none; stroke:#9BA497; stroke-width: 3.0px;stroke-dasharray:1,0}"},
-{class:"lines{fill:none; stroke-width: 8.0px; stroke-linecap: round;}"},
-{class:"separatinglines{fill:none; stroke-width: 12.0px; stroke-linecap: round;}"},
+{class:"lines{fill:none; stroke-width: 5.0px; stroke-linecap: round;}"}, // stroke-linejoin: round;
+{class:"separatinglines{fill:none; stroke-width: 0px; stroke-linecap: round;}"},
 {class:"yLines{fill: none; stroke-width: 0.5px;stroke-dasharray:3}"},
-{class:"xAxisLabels{font-size: 30; fill: #FFF2E1; font-weight: 600;}"}
+{class:"yHighlight{fill: none; stroke-width: 1.66px;}"},
+{class:"xAxisLabels{font-size: 36; fill: #ABABAB; font-weight: 400;}"},
+{class:"valLabels{font-size: 60; fill: white; font-weight: 500;letter-spacing:-1pt;}"},
 ],
 titleOffset:68,
 subOffset:0,
 legendyOffset:15,
-linecolours:["#A5526A","#F19F9E","#D36969","#69A1AA","#66bfd4","#486ba0"]
+linecolours:["#55D8D2", "#FF767C"]
 }
 
 

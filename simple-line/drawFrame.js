@@ -32,6 +32,14 @@ function drawFrame(styles, media,titley,suby) {
         var chart;
 
         if (media == "nyminutevideo") {
+            var dummyWrapper = p.append("svg") // for dev purposes, put in black background, but don't export
+                .attr("id","dummyWrapper")
+                .attr("width", 1920)
+                .attr("height", 1080)
+                .attr("viewBox", "0 0 1920 1080")
+            var backgroundContainer = dummyWrapper.append("g")
+                .attr("transform", "translate(1008, 200)")
+
             var wrapper = p.append("svg")
                 .attr("id",media+"chart")
                 .attr("class", "chart")
@@ -39,7 +47,7 @@ function drawFrame(styles, media,titley,suby) {
                 .attr("height", 1080)
                 .attr("viewBox", "0 0 1920 1080")
             chart = wrapper.append("g")
-                .attr("transform", "translate(993, 230)")
+                .attr("transform", "translate(1008, 200)")
                 .attr("id","nyminutevideosubchart")
                 .attr("class", "chart")
         } else {
@@ -52,10 +60,17 @@ function drawFrame(styles, media,titley,suby) {
             .attr("height", height)
             .attr("viewBox", "0 0 " + width + " " + height);
 
-        chart.append("rect")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("class", media+"background");
+        if (media == "nyminutevideo") {
+            backgroundContainer.append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", media+"background");
+        } else {
+            chart.append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", media+"background");
+        }
 
         if(media=="video") {
             var boxOffset=20
@@ -72,7 +87,6 @@ function drawFrame(styles, media,titley,suby) {
             .attr("id",media+"header");
         
         //headers - title and subtitle
-        if (media!="nyminutevideo") {
         header.append("text")
             .attr("id",media+"Title")
             .attr("class", media+"title")
@@ -81,7 +95,6 @@ function drawFrame(styles, media,titley,suby) {
             .text(title)
             .attr("dy",0)
             .call(wrap,width - (margin.left + margin.right),margin.left);
-        }
         
         var subYOffset = d3.select("#"+media+"header").node().getBBox().height;
         
@@ -122,7 +135,7 @@ function drawFrame(styles, media,titley,suby) {
             .text(function(d){
                 return d;
             })
-            .attr("x",margin.left)
+            .attr("x",width-margin.right)
             .attr("dy","1.1em");
         //now we can layout the text in right place
         d3.select("#"+media+"Footer")

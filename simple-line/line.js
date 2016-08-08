@@ -154,6 +154,17 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
         })
         .interpolate(lineSmoothing)
 
+    var annotations = plot.append("g").attr("id","annotations").selectAll("g")
+            .data(plotArrays)
+            .enter()
+            .append("g")
+            .attr("transform",function(){
+                if(yAlign=="right") {
+                    return "translate("+(margin.left)+","+(margin.top)+")"
+                }
+                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+            });
+
     var lines = plot.append("g").attr("id","series").selectAll("g")
             .data(plotArrays)
             .enter()
@@ -188,15 +199,18 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
             })
 
-        lines.append("g").attr("fill",function(d,i){return colours[i]})
+        lines.append("g")
+            .attr("fill",'white')
+            .attr("stroke", function(d, i) { return colours[i] })
+            .attr('stroke-width', '4px')
             .selectAll("circle")
             .data(function(d){
                 return d;})
             .enter()
             .append("circle")
             .attr("r", function(d, i) {
-                if (i == 0 || i == data.length - 1 || d.highlight == "yes") {
-                    return yOffset/4
+                if (i == 0 || i == data.length - 1 ) {
+                    return yOffset/5
                     }
                     else {return 0}
                 })
@@ -209,18 +223,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
             });
 
-    var annotations = plot.append("g").attr("id","annotations").selectAll("g")
-            .data(plotArrays)
-            .enter()
-            .append("g")
-            .attr("transform",function(){
-                if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
-                }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
-            });
 
-        annotations.selectAll("line")
+        annotations.selectAll("line.nyminutevideoyLines")
             .data(function(d){
                 return d;})
             .enter()
@@ -231,9 +235,52 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("y1",function(d){return yScale(yAxisMin)})
             .attr("y2",function(d){return yScale(yAxisMax)})
             .style('stroke', function(d, i) {
-                if (i == 0 || i == data.length - 1 || d.highlight == "yes") {
-                    return "#FFF2E1";
+                if (d.highlight == "yes") {
+                    return "#FAFAFA";
                 }
+            });
+
+        // for yHighlight
+        if (yHighlight) {
+        annotations.append("line")
+            .attr('class', "nyminutevideoyHighlight")
+            .attr("x1",function(d){return -10;})
+            .attr("x2",function(d){return plotWidth + 10;})
+            .attr("y1",function(d){return yScale(yHighlight)})
+            .attr("y2",function(d){return yScale(yHighlight)})
+            .style('stroke', function(d, i) {
+                return "#FFF2E1";
+            }); 
+        }           
+
+        annotations.selectAll("text.nyminutevideovalLabels")
+            .data(function(d){
+                return d;})
+            .enter()
+            .append("text")
+            .attr('class', "nyminutevideovalLabels")
+            .attr("id", function(d, i) {
+                if(i == 0) {
+                    return "valLabelStart"
+                }
+            })
+            .text(function(d, i) {
+                if(i == 0 || i == data.length - 1 || d.highlight == "yes" ) {
+                    var unitLabel = unit || "";
+                    return d3.format('.2f')(d.val) + unitLabel;
+                }
+            })
+            .attr("x",function(d, i){
+                if (i == 0) {
+                    return xScale(d.date) - 20;
+                } 
+                return xScale(d.date) + 24;
+            })
+            .attr("y",function(d){return yScale(d.val) + 8})
+            .style('text-anchor', function(d, i) {
+                if (i == 0) {
+                    return 'end';
+                } 
             });
 
         annotations.selectAll("text.nyminutevideoxAxisLabels")
@@ -244,38 +291,18 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr('class', "nyminutevideoxAxisLabels")
             .text(function(d, i) {
                 if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
-                    var formatDate = d3.time.format("%Y");
+                    var formatDate = d3.time.format("%b %e");
                     return formatDate(d.date);
                 }
             })
             .attr("x",function(d, i){
-                return xScale(d.date) + 8;
-            })
-            .attr("y",function(d){return yScale(yAxisMin) - 8});
-
-        annotations.selectAll("text.nyminutevideovalLabels")
-            .data(function(d){
-                return d;})
-            .enter()
-            .append("text")
-            .attr('class', "nyminutevideovalLabels")
-            .text(function(d, i) {
-                if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
-                    return d.val;
-                }
-            })
-            .attr("x",function(d, i){
                 if (i == 0) {
-                    return xScale(d.date) - 16;
+                    var widthOfValLabel = d3.select("#valLabelStart").node().getBBox().width;
+                    return xScale(d.date) - 20 - widthOfValLabel;
                 } 
-                return xScale(d.date) + 20;
+                return xScale(d.date) + 24;
             })
-            .attr("y",function(d){return yScale(d.val) + 8})
-            .style('text-anchor', function(d, i) {
-                if (i == 0) {
-                    return 'end';
-                } 
-            });
+            .attr("y",function(d){return yScale(d.val) + 50})           
 
     //if needed, create markers
     if (markers){
@@ -292,7 +319,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                     return "translate("+(margin.left)+","+(margin.top)+")"
                 }
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
-            });
+            })
     }
 
     d3.selectAll(".domain").remove()
