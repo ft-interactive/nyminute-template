@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat){
 
 
     var titleYoffset=0;
@@ -289,9 +289,10 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .enter()
             .append("text")
             .attr('class', "nyminutevideoxAxisLabels")
+            .append('tspan')
             .text(function(d, i) {
                 if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
-                    var formatDate = d3.time.format("%b %e");
+                    var formatDate = d3.time.format(xAxisDateFormat);
                     return formatDate(d.date);
                 }
             })
@@ -302,7 +303,24 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 } 
                 return xScale(d.date) + 24;
             })
-            .attr("y",function(d){return yScale(d.val) + 50})           
+            .attr("y",function(d){return yScale(d.val) + 50})
+            .append('tspan')
+            .text(function(d, i) {
+                if (secondLineXAxisDateFormat) {
+                    if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
+                        var formatDate = d3.time.format(secondLineXAxisDateFormat);
+                        return formatDate(d.date);
+                    }
+                }
+            })
+            .attr("x",function(d, i){
+                if (i == 0) {
+                    var widthOfValLabel = d3.select("#valLabelStart").node().getBBox().width;
+                    return xScale(d.date) - 20 - widthOfValLabel;
+                } 
+                return xScale(d.date) + 24;
+            })
+            .attr("y",function(d){return yScale(d.val) + 85})      
 
     //if needed, create markers
     if (markers){
