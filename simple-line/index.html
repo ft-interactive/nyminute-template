@@ -65,7 +65,10 @@
             //date formatter, matching the format of the incoming csv...
             //var parseDate = d3.time.format("%Y %b").parse;
             //var parseDate = d3.time.format("%Y").parse;//just full year
-            var parseDate = d3.time.format("%-m/%-d/%y %H:%M").parse;
+            var parseDate = d3.time.format("%-m/%-d/%y").parse;
+            if (data[0].Date.includes(':')) {
+                parseDate = d3.time.format("%-m/%-d/%y %H:%M").parse;
+            }
             /*
             some common formatting parsers....
             d3.time.format("%Y %b") 1986 Jan
@@ -80,7 +83,8 @@
 
             //parse the data
             data.forEach(function(d) {
-                d.date=parseDate(d.date);
+                d.date=parseDate(d.Date);
+                delete d.Date;
             });
 
             data.sort(function(a,b){
