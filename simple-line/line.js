@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines){
 
 
     var titleYoffset=0;
@@ -186,7 +186,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
             })
         
-        lines.append("path")
+    var trace = lines.append("path")
             .attr("class",media+"lines")
             .attr("stroke",function(d,i){
                 return colours[i];  
@@ -198,6 +198,10 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 }
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
             })
+
+        if (roundLines) {
+            trace.attr('stroke-linejoin', 'round')
+        }
 
         lines.append("g")
             .attr("fill",'white')
