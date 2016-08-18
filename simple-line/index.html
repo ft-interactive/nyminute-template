@@ -17,7 +17,7 @@
     <script src="saveSvgAsPng.js"></script>
     <script>
         //datafile
-        var dataURL = "data.csv"
+        var dataURL = "data.tsv"
         
         //titles, footnotes
         var title = "Chinese profits are down";
@@ -61,8 +61,19 @@
         ]
         //Add blank frames
         drawFrames()
+        
         //Load Data
-        d3.csv(dataURL,function(error, data){
+        if (dataURL.indexOf('.csv') >= 0) {
+            d3.csv(dataURL,function(error, data) {
+                handleData(data);
+            })           
+        } else {
+            d3.tsv(dataURL,function(error, data) {
+                handleData(data);
+            }) 
+        }
+
+        function handleData(data) {
             //date formatter, matching the format of the incoming csv...
             //var parseDate = d3.time.format("%Y %b").parse;
             //var parseDate = d3.time.format("%Y").parse;//just full year
@@ -102,7 +113,7 @@
                 var yLabel=frames[i].yLabel
                 lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines);
             }
-        })//end data load
+        }//end data load
 
         function drawFrames(){
             for (var i=0;i<frames.length;i++){
