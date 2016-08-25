@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines){
 
 
     var titleYoffset=0;
@@ -255,6 +255,26 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .style('stroke', function(d, i) {
                 return "#FFF2E1";
             }); 
+
+        annotations.append('text')
+            .attr('class', 'nyminutevideoyHighlightLabels')
+            .attr('x', function() {
+                if (yAxisHighlightLabelSide == "left") {
+                    return xScale(data[0].date) - 20;
+                }
+                return xScale(data[data.length - 1].date) + 20;
+            })
+            .attr('y', yScale(yHighlight) + 12)
+            .style('text-anchor', function() {
+                if (yAxisHighlightLabelSide == "left") {
+                    return 'end';
+                }
+                return 'start';
+            })
+            .text(function() {
+                var unitLabel = unit || "";
+                return yHighlight + unitLabel
+            });          
         }           
 
         annotations.selectAll("text.nyminutevideovalLabels")
