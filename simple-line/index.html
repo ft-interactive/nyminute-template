@@ -27,6 +27,7 @@
         var yAxisHighlight="1.38";
         var yAxisHighlightLabelSide="right"; // choose to put y axis highlight label on "left" or "right" side
         var unit; // optional. e.g. %, bn, m, $
+        var valueFormat = ".2f"; // for example => .2f or .1f or ,.2f
         var lineSmoothing="linear";//choose 'linear' for an unsmoothed line 'monotone' for smooth
         var logScale=false;
         var logScaleStart=1000;
@@ -112,7 +113,7 @@
                 var legend=frames[i].legend;
                 var subYoffset=stylename.subOffset
                 var yLabel=frames[i].yLabel
-                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines);
+                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, roundLines);
             }
         }//end data load
 

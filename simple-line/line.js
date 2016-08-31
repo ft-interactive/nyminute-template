@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, roundLines){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, roundLines){
 
 
     var titleYoffset=0;
@@ -291,7 +291,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .text(function(d, i) {
                 if(i == 0 || i == data.length - 1 || d.highlight == "yes" ) {
                     var unitLabel = unit || "";
-                    return d3.format('.2f')(d.val) + unitLabel;
+                    return d3.format(valueFormat)(d.val) + unitLabel;
                 }
             })
             .attr("x",function(d, i){
