@@ -24,7 +24,7 @@
         var source = "Source: Bloomberg";
 
         //graph options
-        var yAxisHighlight="1.38";
+        var yAxisHighlight; // optional. e.g. "1.38"
         var yAxisHighlightLabelSide="right"; // choose to put y axis highlight label on "left" or "right" side
         var unit; // optional. e.g. %, bn, m, $
         var valueFormat = ".2f"; // for example => .2f or .1f or ,.2f
@@ -36,12 +36,16 @@
         var numTicksx = 5;//rough number of ticks for x axis
         var interval="years";//days, months or years
         var tick//=[0.2,0.3];//option to force x-axis tick values for online
-        var yAxisMin=1.25;
-        var yAxisMax=1.498;
+        var yAxisMin; // optional. use as overrides
+        var yAxisMax; // optional. use as overrides
         var roundLines=true; // true for rounded corners
 
         var xAxisDateFormat = "%b %e";
-        var secondLineXAxisDateFormat; // optional
+        var secondLineXAxisDateFormat; // optional (%Y and %H:%M are common ones)
+
+        // leave these blank if you don't want to override the dates
+        var overrideFirstDate; // e.g. "May 4,|2014" 
+        var overrideLastDate; // if there's a |, it will put stuff after the comma on a second line
 
         //Use the frames array to set unique values for each media type of frame
         // Print column sizes-- 1col 53.71mm: 2col 112.25mm: 3col 170.8mm: 4col 229.34mm: 5col 287.88mm: 6col 346.43
@@ -113,7 +117,7 @@
                 var legend=frames[i].legend;
                 var subYoffset=stylename.subOffset
                 var yLabel=frames[i].yLabel
-                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, roundLines);
+                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines);
             }
         }//end data load
 

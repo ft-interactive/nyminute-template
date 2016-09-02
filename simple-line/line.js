@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, roundLines){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines){
 
 
     var titleYoffset=0;
@@ -30,8 +30,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     var yDomain;
 
     //calculate range of y axis series data
-    var min=yAxisMin;
-    var max=yAxisMax;
+    var min=yAxisMin || 10000000000000000000;
+    var max=yAxisMax || 0;
 
     data.forEach(function(d,i){
         seriesNames.forEach(function(e){
@@ -236,8 +236,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr('class', "nyminutevideoyLines")
             .attr("x1",function(d){return xScale(d.date);})
             .attr("x2",function(d){return xScale(d.date);})
-            .attr("y1",function(d){return yScale(yAxisMin)})
-            .attr("y2",function(d){return yScale(yAxisMax)})
+            .attr("y1",function(d){return yScale(min)})
+            .attr("y2",function(d){return yScale(max)})
             .style('stroke', function(d, i) {
                 if (d.highlight == "yes") {
                     return "#FAFAFA";
@@ -316,6 +316,13 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .append('tspan')
             .text(function(d, i) {
                 if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
+                    if (overrideFirstDate && i == 0) {
+                        return overrideFirstDate.split("|")[0];
+                    }
+                    if (overrideLastDate && i == data.length - 1) {
+                        return overrideLastDate.split("|")[0];
+                    }
+
                     var formatDate = d3.time.format(xAxisDateFormat);
                     return formatDate(d.date);
                 }
@@ -330,8 +337,15 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("y",function(d){return yScale(d.val) + 50})
             .append('tspan')
             .text(function(d, i) {
+                if (overrideFirstDate && overrideFirstDate.indexOf("|") > -1 && i == 0) {
+                    return overrideFirstDate.split("|")[1];
+                }
+                if (overrideLastDate && overrideLastDate.indexOf("|") > -1 && i == data.length - 1) {
+                    return overrideLastDate.split("|")[1];
+                }
                 if (secondLineXAxisDateFormat) {
                     if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
+
                         var formatDate = d3.time.format(secondLineXAxisDateFormat);
                         return formatDate(d.date);
                     }
