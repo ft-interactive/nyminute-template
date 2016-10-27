@@ -1,5 +1,5 @@
 
-function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines){
+function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logScale, logScaleStart,yHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yAlign, ticks, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines, gaps){
 
 
     var titleYoffset=0;
@@ -27,6 +27,10 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
     //calculate range of time series 
     var xDomain = d3.extent(data, function(d) {return d.date;});
+
+    if (gaps) {
+        xDomain = data.map(function(d) { return d.date; });
+    }
     var yDomain;
 
     //calculate range of y axis series data
@@ -126,6 +130,12 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     var xScale = d3.time.scale()
         .domain(xDomain)
         .range([0,(plotWidth)])
+
+    if (gaps) {
+        xScale = d3.scale.ordinal()
+            .domain(xDomain)
+            .rangeBands([0, (plotWidth)])
+    }
 
     // var xAxis = d3.svg.axis()
     //     .scale(xScale)

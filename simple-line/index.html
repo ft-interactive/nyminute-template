@@ -39,6 +39,7 @@
         var yAxisMin; // optional. use as overrides
         var yAxisMax; // optional. use as overrides
         var roundLines=true; // true for rounded corners
+        var gaps=false; // switch to true if there are gaps in the data
 
         var xAxisDateFormat = "%b %e";
         var secondLineXAxisDateFormat; // optional (%Y and %H:%M are common ones)
@@ -117,7 +118,7 @@
                 var legend=frames[i].legend;
                 var subYoffset=stylename.subOffset
                 var yLabel=frames[i].yLabel
-                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines);
+                lineChart(data, stylename, media, chartpadding,legend, lineSmoothing, logScale, logScaleStart, yAxisHighlight, yAxisHighlightLabelSide, markers, numTicksy, numTicksx, yLabel, tick, yAxisMin, yAxisMax, xAxisDateFormat, secondLineXAxisDateFormat, valueFormat, overrideFirstDate, overrideLastDate, roundLines, gaps);
             }
         }//end data load
 
