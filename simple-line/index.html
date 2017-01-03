@@ -125,7 +125,7 @@
         }//end data load
 
         function drawFrames(data){
-            var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'Date' && d != 'highlight'; });
+            var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'Date' && d != 'highlight' && d != 'annotate'; });
             var generatedTitle = seriesNames[0];
             if (seriesNames.length > 1) {
               generatedTitle = seriesNames[0] + " v " + seriesNames[1];

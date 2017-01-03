@@ -6,7 +6,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     var subtitleYoffset=0;
 
     // return the series names from the first row of the spreadsheet
-    var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'date' && d != 'highlight' ; });
+    var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'date' && d != 'highlight' && d != 'annotate' ; });
     //Select the plot space in the frame from which to take measurements
     var frame=d3.select("#"+media+"chart")
     var plot=d3.select("#"+media+"plot")
@@ -57,6 +57,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             var myRow = new Object();
             myRow.date=d.date;
             myRow.highlight=d.highlight;
+            myRow.annotate=d.annotate;
             myRow.val=d[series];
             if (myRow.val){
                 plotArrays[e].push(myRow);
@@ -241,7 +242,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
         annotations.selectAll("line.nyminutevideoyLines")
             .data(function(d){
                 return d.filter(function(a) {
-                  return a.highlight === "yes"
+                  return a.highlight === "yes" || (a.annotate !="" && a.annotate != undefined);
                 });})
             .enter()
             .append("line")
@@ -251,7 +252,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("y1",function(d){return yScale(min)})
             .attr("y2",function(d){return yScale(max)})
             .style('stroke', function(d, i) {
-                if (d.highlight == "yes") {
+              console.log(d)
+                if (d.highlight == "yes" || (d.annotate !="" && d.annotate !=undefined)) {
                     return "#FAFAFA";
                 }
             });
@@ -322,11 +324,17 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
         annotations.selectAll("text.nyminutevideoxAxisLabels")
             .data(function(d){
                 return d.filter(function(a, i) {
-                  return i == 0 || i == data.length - 1 || a.highlight == "yes"
+                  return i == 0 || i == data.length - 1 || a.highlight == "yes" || (a.annotate != "" && a.annotate != undefined);
                 });})
             .enter()
             .append("text")
             .attr('class', "nyminutevideoxAxisLabels")
+            .attr('text-anchor', function(d) {
+              if (d.annotate != "" && d.annotate != undefined) {
+                return 'middle';
+              }
+              return 'left'
+            })
             .append('tspan')
             .text(function(d, i) {
                 if (overrideFirstDate && i == 0) {
@@ -334,6 +342,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 }
                 if (overrideLastDate && i == data.length - 1) {
                     return overrideLastDate.split("|")[0];
+                }
+                if (d.annotate != "" && d.annotate != undefined) {
+                  return d.annotate;
                 }
 
                 var formatDate = d3.time.format(xAxisDateFormat);
@@ -344,9 +355,17 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                     var widthOfValLabel = d3.select("#valLabelStart").node().getBBox().width;
                     return xScale(d.date) - 20 - widthOfValLabel;
                 }
+                if (d.annotate != "" && d.annotate != undefined) {
+                  return xScale(d.date);
+                }
                 return xScale(d.date) + 24;
             })
-            .attr("y",function(d){return yScale(d.val) + 50})
+            .attr("y",function(d){
+              if (d.annotate != "" && d.annotate != undefined) {
+                return 0;
+              }
+              return yScale(d.val) + 50
+            })
             .append('tspan')
             .text(function(d, i) {
                 if (overrideFirstDate && overrideFirstDate.indexOf("|") > -1 && i == 0) {
