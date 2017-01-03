@@ -13,7 +13,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
     var yOffset=d3.select("#"+media+"Subtitle").style("font-size");
     yOffset=Number(yOffset.replace(/[^\d.-]/g, ''));
-    
+
     //Get the width,height and the marginins unique to this chart
     var w=plot.node().getBBox().width;
     var h=plot.node().getBBox().height;
@@ -25,7 +25,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     var plotWidth = w-(margin.left+margin.right);
     var plotHeight = h-(margin.top+margin.bottom);
 
-    //calculate range of time series 
+    //calculate range of time series
     var xDomain = d3.extent(data, function(d) {return d.date;});
 
     if (gaps) {
@@ -43,7 +43,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 min=Math.min(min,d[e]);
                 max=Math.max(max,d[e]);
             }
-        });			
+        });
     });
     yDomain=[min,max];
 
@@ -61,8 +61,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             if (myRow.val){
                 plotArrays[e].push(myRow);
             }   else    {
-                //console.log('skipped a value:'+i);   
-            } 
+                //console.log('skipped a value:'+i);
+            }
         });
     });
 
@@ -89,7 +89,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     if (logScale){
         yAxis.tickFormat(function (d) {
             return yScale.tickFormat(1,d3.format(",d"))(d)
-        })   
+        })
     }
     // var yLabel=plot.append("g")
     // .attr("class",media+"yAxis")
@@ -156,11 +156,11 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
     //create a line function that can convert data[] into x and y points
     var lineData= d3.svg.line()
-        .x(function(d,i) { 
-            return xScale(d.date); 
+        .x(function(d,i) {
+            return xScale(d.date);
         })
-        .y(function(d) { 
-            return yScale(d.val); 
+        .y(function(d) {
+            return yScale(d.val);
         })
         .interpolate(lineSmoothing)
 
@@ -180,13 +180,13 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .enter()
             .append("g")
             .attr("id",function(d,i){
-                return seriesNames[i];  
+                return seriesNames[i];
             })
 
         lines.append("path")
             .attr("class",media+"separatinglines")
             .attr("stroke",function(d,i){
-                return '#333';  
+                return '#333';
             })
             .attr('d', function(d){ return lineData(d); })
             .attr("transform",function(){
@@ -195,11 +195,11 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 }
                  else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
             })
-        
+
     var trace = lines.append("path")
             .attr("class",media+"lines")
             .attr("stroke",function(d,i){
-                return colours[i];  
+                return colours[i];
             })
             .attr('d', function(d){ return lineData(d); })
             .attr("transform",function(){
@@ -240,7 +240,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
         annotations.selectAll("line.nyminutevideoyLines")
             .data(function(d){
-                return d;})
+                return d.filter(function(a) {
+                  return a.highlight === "yes"
+                });})
             .enter()
             .append("line")
             .attr('class', "nyminutevideoyLines")
@@ -264,7 +266,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("y2",function(d){return yScale(yHighlight)})
             .style('stroke', function(d, i) {
                 return "#FFF2E1";
-            }); 
+            });
 
         annotations.append('text')
             .attr('class', 'nyminutevideoyHighlightLabels')
@@ -284,12 +286,14 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .text(function() {
                 var unitLabel = unit || "";
                 return yHighlight + unitLabel
-            });          
-        }           
+            });
+        }
 
         annotations.selectAll("text.nyminutevideovalLabels")
             .data(function(d){
-                return d;})
+                return d.filter(function(a, i) {
+                  return i == 0 || i == data.length - 1 || a.highlight == "yes"
+                });})
             .enter()
             .append("text")
             .attr('class', "nyminutevideovalLabels")
@@ -299,27 +303,27 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 }
             })
             .text(function(d, i) {
-                if(i == 0 || i == data.length - 1 || d.highlight == "yes" ) {
-                    var unitLabel = unit || "";
-                    return d3.format(valueFormat)(d.val) + unitLabel;
-                }
+                var unitLabel = unit || "";
+                return d3.format(valueFormat)(d.val) + unitLabel;
             })
             .attr("x",function(d, i){
                 if (i == 0) {
                     return xScale(d.date) - 20;
-                } 
+                }
                 return xScale(d.date) + 24;
             })
             .attr("y",function(d){return yScale(d.val) + 8})
             .style('text-anchor', function(d, i) {
                 if (i == 0) {
                     return 'end';
-                } 
+                }
             });
 
         annotations.selectAll("text.nyminutevideoxAxisLabels")
             .data(function(d){
-                return d;})
+                return d.filter(function(a, i) {
+                  return i == 0 || i == data.length - 1 || a.highlight == "yes"
+                });})
             .enter()
             .append("text")
             .attr('class', "nyminutevideoxAxisLabels")
@@ -341,7 +345,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 if (i == 0) {
                     var widthOfValLabel = d3.select("#valLabelStart").node().getBBox().width;
                     return xScale(d.date) - 20 - widthOfValLabel;
-                } 
+                }
                 return xScale(d.date) + 24;
             })
             .attr("y",function(d){return yScale(d.val) + 50})
@@ -365,10 +369,10 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 if (i == 0) {
                     var widthOfValLabel = d3.select("#valLabelStart").node().getBBox().width;
                     return xScale(d.date) - 20 - widthOfValLabel;
-                } 
+                }
                 return xScale(d.date) + 24;
             })
-            .attr("y",function(d){return yScale(d.val) + 85})      
+            .attr("y",function(d){return yScale(d.val) + 85})
 
     //if needed, create markers
     if (markers){
@@ -406,7 +410,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
     //     var drag = d3.behavior.drag().on("drag", moveLegend);
     //     d3.select("#"+media+"legend").call(drag);
-            
+
     //     legend.append("text")
 
     //         .attr("id",function(d,i){
@@ -420,7 +424,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     //         })
     //     legend.append("line")
     //         .attr("stroke",function(d,i){
-    //             return colours[i];  
+    //             return colours[i];
     //         })
     //         .attr("x1",0)
     //         .attr("x2",yOffset)
@@ -432,18 +436,18 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
     //         if (legAlign=='hori') {
     //             var gHeigt=d3.select("#"+media+"l0").node().getBBox().height;
     //             if (i>0) {
-    //                 var gWidth=d3.select("#"+media+"l"+(i-1)).node().getBBox().width+yOffset; 
+    //                 var gWidth=d3.select("#"+media+"l"+(i-1)).node().getBBox().width+yOffset;
     //             }
     //             else {gWidth=0};
     //             legendyOffset=legendyOffset+gWidth;
-    //             return "translate("+(legendyOffset)+","+(gHeigt/2)+")";  
+    //             return "translate("+(legendyOffset)+","+(gHeigt/2)+")";
     //         }
     //         else {
     //             return "translate(0,"+((i*yOffset))+")"};
     // })
 
     // }
-    
+
 
     function colculateTicksize(align, offset, media) {
         if (media == "nyminutevideo") {
