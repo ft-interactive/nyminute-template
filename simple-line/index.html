@@ -18,9 +18,9 @@
     <script>
         //datafile
         var dataURL = "data.tsv"
-        
+
         //titles, footnotes
-        var title = "Chinese profits are down";
+        var title; // fill this in if you want to override the data column title
         var source = "Source: Bloomberg";
 
         //graph options
@@ -45,7 +45,7 @@
         var secondLineXAxisDateFormat; // optional (%Y and %H:%M are common ones)
 
         // leave these blank if you don't want to override the dates
-        var overrideFirstDate; // e.g. "May 4,|2014" 
+        var overrideFirstDate; // e.g. "May 4,|2014"
         var overrideLastDate; // if there's a |, it will put stuff after the comma on a second line
 
         //Use the frames array to set unique values for each media type of frame
@@ -57,7 +57,7 @@
         // {name:"video",width:1920,height:1080,units:'px',margins:[{top:80,right:207,bottom:50,left:207}],stylesheet:stylevid,legend:"hori",yLabel:"right"},
         {name:"nyminutevideo",width:897,height:680,units:'px',margins:[{top:0,right:17,bottom:17,left:17}],stylesheet:stylenyminutevid,legend:"hori",yLabel:"right"}
         ]
-        
+
         //sets the padding inside the chart area
         var chartpadding=[
         {name:"print",margin:[{top:0, right:10, bottom:15, left:10}]},
@@ -66,18 +66,20 @@
         {name:"video",margin:[{top:55, right:35,bottom:50, left:42}]},
         {name:"nyminutevideo",margin:[{top:20, right:135,bottom:30, left:140}]}
         ]
-        //Add blank frames
-        drawFrames()
-        
+        // //Add blank frames
+        // drawFrames()
+
         //Load Data
         if (dataURL.indexOf('.csv') >= 0) {
             d3.csv(dataURL,function(error, data) {
+                drawFrames(data); //Add blank frames
                 handleData(data);
-            })           
+            })
         } else {
             d3.tsv(dataURL,function(error, data) {
+                drawFrames(data); //Add blank frames
                 handleData(data);
-            }) 
+            })
         }
 
         function handleData(data) {
@@ -122,7 +124,15 @@
             }
         }//end data load
 
-        function drawFrames(){
+        function drawFrames(data){
+            var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'Date' && d != 'highlight'; });
+            var generatedTitle = seriesNames[0];
+            if (seriesNames.length > 1) {
+              generatedTitle = seriesNames[0] + " v " + seriesNames[1];
+            }
+
+            title = title || generatedTitle;
+
             for (var i=0;i<frames.length;i++){
                 var stylename=frames[i].stylesheet;
                 var media = frames[i].name;
@@ -181,7 +191,7 @@
             var px = mm*2.83464480558843;
             return px;
         }
-            
+
     </script>
 </body>
 </html>
