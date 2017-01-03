@@ -94,7 +94,7 @@ var stylenyminutevid = {classes:
 {class:"titleframe{fill: #757575;}"},
 {class:"chartholder{fill: none;}"},
 {class:"title{font-size: 80px; fill: #DEDEDE; font-weight: 600;}"},
-{class:"subtitle{font-size: 42; fill: #FFF2E1; font-weight: 600;}"},
+{class:"subtitle{font-size: 42; fill: #ffffff; font-weight: 600;}"},
 {class:"source{font-size: 36; fill: #ABABAB; font-weight: 300;text-anchor:end;}"},
 {class:"xAxis{fill:none; stroke: none;}"},
 {class:"xAxis line{fill:none; stroke-width: 2.0px; stroke:#C3BCB0;}"},
@@ -119,6 +119,6 @@ linecolours:["#55D8D2", "#FF767C"]
 
 
 
-    //Tabular with 
+    //Tabular with
     //-webkit-font-feature-settings: 'tnum' 1;
        //font-feature-settings: 'tnum' 1;
