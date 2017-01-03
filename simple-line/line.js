@@ -329,17 +329,15 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr('class', "nyminutevideoxAxisLabels")
             .append('tspan')
             .text(function(d, i) {
-                if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
-                    if (overrideFirstDate && i == 0) {
-                        return overrideFirstDate.split("|")[0];
-                    }
-                    if (overrideLastDate && i == data.length - 1) {
-                        return overrideLastDate.split("|")[0];
-                    }
-
-                    var formatDate = d3.time.format(xAxisDateFormat);
-                    return formatDate(d.date);
+                if (overrideFirstDate && i == 0) {
+                    return overrideFirstDate.split("|")[0];
                 }
+                if (overrideLastDate && i == data.length - 1) {
+                    return overrideLastDate.split("|")[0];
+                }
+
+                var formatDate = d3.time.format(xAxisDateFormat);
+                return formatDate(d.date);
             })
             .attr("x",function(d, i){
                 if (i == 0) {
