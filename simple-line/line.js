@@ -374,7 +374,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 if (overrideLastDate && overrideLastDate.indexOf("|") > -1 && i == data.length - 1) {
                     return overrideLastDate.split("|")[1];
                 }
-                if (secondLineXAxisDateFormat) {
+                if (secondLineXAxisDateFormat && (d.annotate = "" || d.annotate == undefined)) {
                     var formatDate = d3.time.format(secondLineXAxisDateFormat);
                     return formatDate(d.date);
                 }
