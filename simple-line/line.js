@@ -375,11 +375,8 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                     return overrideLastDate.split("|")[1];
                 }
                 if (secondLineXAxisDateFormat) {
-                    if(i == 0 || i == data.length - 1 || d.highlight=="yes") {
-
-                        var formatDate = d3.time.format(secondLineXAxisDateFormat);
-                        return formatDate(d.date);
-                    }
+                    var formatDate = d3.time.format(secondLineXAxisDateFormat);
+                    return formatDate(d.date);
                 }
             })
             .attr("x",function(d, i){
