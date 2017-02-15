@@ -101,9 +101,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
 
 
     //calculate what the ticksize should be now that the text for the labels has been drawn
-    // var yLabelOffset=yLabel.node().getBBox().width
-    // //console.log("offset= ",yLabelOffset)
-    // var yticksize=colculateTicksize(yAlign, yLabelOffset, media);
+    // var hiddenLabelOffset=yLabel.node().getBBox().width
+    // //console.log("offset= ",hiddenLabelOffset)
+    // var yticksize=colculateTicksize(yAlign, hiddenLabelOffset, media);
     //console.log(yticksize);
 
     // yLabel.call(yAxis.tickSize(yticksize))
@@ -128,32 +128,37 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             return d==originValue || d==yHighlight;
         }).classed(media+"origin",true);
 
+    //use these hidden labels to calculate margins/widths
+    var hiddenLeftLabel = plot.append("g")
+      .attr("class",media+"hiddenLabel")
+      .append('text')
+      .attr('class', media+'valLabels')
+      .text(function() {
+        var unitLabel = unit || "";
+        return d3.format(valueFormat)(plotArrays[0][0].val) + unitLabel
+      });
+
+    var hiddenRightLabel = plot.append("g")
+      .attr("class",media+"hiddenLabel")
+      .append('text')
+      .attr('class', media+'valLabels')
+      .text(function() {
+        var unitLabel = unit || "";
+        return d3.format(valueFormat)(plotArrays[0][plotArrays[0].length - 1].val) + unitLabel
+      });
+
+    var hiddenLabelOffset=hiddenLeftLabel.node().getBBox().width + hiddenRightLabel.node().getBBox().width + 40
+    var hiddenLeftLabelOffset=hiddenLeftLabel.node().getBBox().width + 20
+
     var xScale = d3.time.scale()
         .domain(xDomain)
-        .range([0,(plotWidth)])
+        .range([0,(plotWidth-hiddenLabelOffset)])
 
     if (gaps) {
         xScale = d3.scale.ordinal()
             .domain(xDomain)
-            .rangeBands([0, (plotWidth)])
+            .rangeBands([0, (plotWidth-hiddenLabelOffset)])
     }
-
-    // var xAxis = d3.svg.axis()
-    //     .scale(xScale)
-    //     .tickValues(ticks)
-    //     .ticks(numTicksx)
-    //     .tickSize(yOffset/2)
-    //     .orient("bottom");
-
-    //  var xLabel=plot.append("g")
-    //     .attr("class",media+"xAxis")
-    //     .attr("transform",function(){
-    //         if(yAlign=="right") {
-    //             return "translate("+(margin.left)+","+(plotHeight+margin.top)+")"
-    //         }
-    //          else {return "translate("+(margin.left+yLabelOffset)+","+(plotHeight+margin.top)+")"}
-    //         })
-    //     .call(xAxis);
 
     //create a line function that can convert data[] into x and y points
     var lineData= d3.svg.line()
@@ -171,9 +176,11 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .append("g")
             .attr("transform",function(){
                 if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
+                    return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
                 }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+                else {
+                   return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
+                }
             });
 
     var lines = plot.append("g").attr("id","series").selectAll("g")
@@ -192,9 +199,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr('d', function(d){ return lineData(d); })
             .attr("transform",function(){
                 if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
+                    return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
                 }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+                 else {return "translate("+(margin.left+hiddenLabelOffset)+","+(margin.top)+")"}
             })
 
     var trace = lines.append("path")
@@ -205,9 +212,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr('d', function(d){ return lineData(d); })
             .attr("transform",function(){
                 if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
+                    return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
                 }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+                 else {return "translate("+(margin.left+hiddenLabelOffset)+","+(margin.top)+")"}
             })
 
         if (roundLines) {
@@ -233,9 +240,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("cy",function(d){return yScale(d.val)})
             .attr("transform",function(){
                 if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
+                    return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
                 }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+                 else {return "translate("+(margin.left+hiddenLabelOffset)+","+(margin.top)+")"}
             });
 
 
@@ -252,7 +259,6 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("y1",function(d){return yScale(min)})
             .attr("y2",function(d){return yScale(max)})
             .style('stroke', function(d, i) {
-              console.log(d)
                 if (d.highlight == "yes" || (d.annotate !="" && d.annotate !=undefined)) {
                     return "#FAFAFA";
                 }
@@ -374,7 +380,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
                 if (overrideLastDate && overrideLastDate.indexOf("|") > -1 && i == data.length - 1) {
                     return overrideLastDate.split("|")[1];
                 }
-                if (secondLineXAxisDateFormat && (d.annotate = "" || d.annotate == undefined)) {
+                if (secondLineXAxisDateFormat && (d.annotate == "" || d.annotate == undefined)) {
                     var formatDate = d3.time.format(secondLineXAxisDateFormat);
                     return formatDate(d.date);
                 }
@@ -400,9 +406,9 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
             .attr("cy",function(d){return yScale(d.val)})
             .attr("transform",function(){
                 if(yAlign=="right") {
-                    return "translate("+(margin.left)+","+(margin.top)+")"
+                    return "translate("+(margin.left+hiddenLeftLabelOffset)+","+(margin.top)+")"
                 }
-                 else {return "translate("+(margin.left+yLabelOffset)+","+(margin.top)+")"}
+                 else {return "translate("+(margin.left+hiddenLabelOffset)+","+(margin.top)+")"}
             })
     }
 

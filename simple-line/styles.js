@@ -109,7 +109,8 @@ var stylenyminutevid = {classes:
 {class:"yHighlight{fill: none; stroke-width: 1.66px;}"},
 {class:"xAxisLabels{font-size: 36; fill: #ABABAB; font-weight: 400;}"},
 {class:"valLabels{font-size: 60; fill: white; font-weight: 500;letter-spacing:-1pt;}"},
-{class:"yHighlightLabels{font-size: 36; fill: #ABABAB; font-weight: 400;}"}
+{class:"yHighlightLabels{font-size: 36; fill: #ABABAB; font-weight: 400;}"},
+{class:"hiddenLabel{display: none;}"}
 ],
 titleOffset:68,
 subOffset:0,
