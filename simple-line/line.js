@@ -269,7 +269,7 @@ function lineChart(data,stylename,media,plotpadding,legAlign,lineSmoothing, logS
         annotations.append("line")
             .attr('class', "nyminutevideoyHighlight")
             .attr("x1",function(d){return -10;})
-            .attr("x2",function(d){return plotWidth + 10;})
+            .attr("x2",function(d){return plotWidth - hiddenLabelOffset + 10;})
             .attr("y1",function(d){return yScale(yHighlight)})
             .attr("y2",function(d){return yScale(yHighlight)})
             .style('stroke', function(d, i) {
