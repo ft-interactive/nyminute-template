@@ -7,47 +7,76 @@
 </head>
 <body>
     <style>
+        * {font-family: Metric}
+        form input {margin-bottom: 1em; display: block;}
+        form label {margin-top: 2em; display: block;}
+        .form-unit {width: 300px; display: inline-block;}
         text{font-family:metric}
-        svg {position: absolute; top:50;}
+        textarea{width: 100%; min-height: 200px; margin-bottom: 3em;}
+        svg {position: absolute; top:540;}
         #dummyWrapper {border: 1px solid black;}
     </style>
+
+    <form>
+      <textarea id="datainput" placeholder="Drop Excel data here"></textarea>
+
+      <div class="form-unit">
+        <label for="title">Chart title: </label>
+        <input type="text" name="title" id="title" placeholder="Default value from chart column head" />
+      </div>
+
+      <div class="form-unit">
+        <label for="source">Chart source: </label>
+        <input type="text" name="source" id="source" value="Source: Bloomberg" />
+      </div>
+
+      <div class="form-unit">
+        <label for="yAxisHighlight">yAxisHighlight: </label>
+        <input type="text" name="yAxisHighlight" id="yAxisHighlight" />
+      </div>
+
+      <div class="form-unit">
+        <label for="yAxisHighlightLabelSide">yAxisHighlightLabelSide: </label>
+        <select type="text" name="yAxisHighlightLabelSide" id="yAxisHighlightLabelSide">
+          <option value="right">Right</option>
+          <option value="left">Left</option>
+        </select>
+      </div>
+
+      <div class="form-unit">
+        <label for="unit">unit: </label>
+        <input type="text" name="unit" id="unit" />
+      </div>
+
+      <div class="form-unit">
+        <label for="valueFormat">valueFormat: </label>
+        <input type="text" name="valueFormat" id="valueFormat" value=".2f" />
+      </div>
+
+      <div class="form-unit">
+        <label for="gaps">gaps: </label>
+        <select type="text" name="gaps" id="gaps">
+          <option value="false">false</option>
+          <option value="true">true</option>
+        </select>
+      </div>
+
+      <div class="form-unit">
+        <label for="xAxisDateFormat">xAxisDateFormat: </label>
+        <input type="text" name="xAxisDateFormat" id="xAxisDateFormat" value="%b %e," />
+      </div>
+
+      <div class="form-unit">
+        <label for="secondLineXAxisDateFormat">secondLineXAxisDateFormat: </label>
+        <input type="text" name="secondLineXAxisDateFormat" id="secondLineXAxisDateFormat" value="%Y" />
+      </div>
+    </form>
+
     <script src="d3.min.js"></script>
     <script src="drawFrame.js"></script>
     <script src="line.js"></script>
     <script src="saveSvgAsPng.js"></script>
     <script>
-        //datafile
-        var dataURL = "data.tsv"
-
-        //titles, footnotes
-        var title; // fill this in if you want to override the data column title
-        var source = "Source: Bloomberg";
-
-        //graph options
-        var yAxisHighlight; // optional. e.g. "1.38"
-        var yAxisHighlightLabelSide="right"; // choose to put y axis highlight label on "left" or "right" side
-        var unit; // optional. e.g. %, bn, m, $
-        var valueFormat = ".2f"; // for example => .2f or .1f or ,.2f
-        var lineSmoothing="linear";//choose 'linear' for an unsmoothed line 'monotone' for smooth
-        var logScale=false;
-        var logScaleStart=1000;
-        var markers=false;//show circle markers
-        var numTicksy = 3;//rough number of ticks for y axis
-        var numTicksx = 5;//rough number of ticks for x axis
-        var interval="years";//days, months or years
-        var tick//=[0.2,0.3];//option to force x-axis tick values for online
-        var yAxisMin; // optional. use as overrides
-        var yAxisMax; // optional. use as overrides
-        var roundLines=true; // true for rounded corners
-        var gaps=false; // switch to true if there are gaps in the data
-
-        var xAxisDateFormat = "%b %e,";
-        var secondLineXAxisDateFormat="%Y"; // optional (%Y and %H:%M are common ones)
-
-        // leave these blank if you don't want to override the dates
-        var overrideFirstDate; // e.g. "May 4,|2014"
-        var overrideLastDate; // if there's a |, it will put stuff after the comma on a second line
-
         //Use the frames array to set unique values for each media type of frame
         // Print column sizes-- 1col 53.71mm: 2col 112.25mm: 3col 170.8mm: 4col 229.34mm: 5col 287.88mm: 6col 346.43
         var frames=[
@@ -66,23 +95,8 @@
         {name:"video",margin:[{top:55, right:35,bottom:50, left:42}]},
         {name:"nyminutevideo",margin:[{top:20, right:0,bottom:30, left:10}]}
         ]
-        // //Add blank frames
-        // drawFrames()
 
-        //Load Data
-        if (dataURL.indexOf('.csv') >= 0) {
-            d3.csv(dataURL,function(error, data) {
-                drawFrames(data); //Add blank frames
-                handleData(data);
-            })
-        } else {
-            d3.tsv(dataURL,function(error, data) {
-                drawFrames(data); //Add blank frames
-                handleData(data);
-            })
-        }
-
-        function handleData(data) {
+        function handleData(data, yAxisHighlight, yAxisHighlightLabelSide, unit, valueFormat, gaps, xAxisDateFormat, secondLineXAxisDateFormat) {
             //date formatter, matching the format of the incoming csv...
             //var parseDate = d3.time.format("%Y %b").parse;
             //var parseDate = d3.time.format("%Y").parse;//just full year
@@ -124,7 +138,18 @@
             }
         }//end data load
 
-        function drawFrames(data){
+        function drawFrames(data, title, source){
+          // delete existing frames
+          if (document.querySelector('#dummyWrapper')) {
+            document.querySelector('#dummyWrapper').remove();
+          }
+          if (document.querySelector('#nyminutevideochart')) {
+            document.querySelector('#nyminutevideochart').remove();
+          }
+          if (document.querySelector('.button')) {
+            document.querySelector('.button').remove();
+          }
+
             var seriesNames = Object.keys(data[0]).filter(function(d){ return d != 'Date' && d != 'highlight' && d != 'annotate'; });
             var generatedTitle = seriesNames[0];
             if (seriesNames.length > 1) {
@@ -132,6 +157,7 @@
             }
 
             title = title || generatedTitle;
+            console.log(title, generatedTitle)
 
             for (var i=0;i<frames.length;i++){
                 var stylename=frames[i].stylesheet;
@@ -193,5 +219,6 @@
         }
 
     </script>
+    <script src="gui.js"></script>
 </body>
 </html>
